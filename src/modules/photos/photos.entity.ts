@@ -12,6 +12,6 @@ export class PhotoEntity {
   @Column()
   alt: string;
 
-  @ManyToOne((type) => OfferEntity, (offer) => offer.photos)
+  @ManyToOne(() => OfferEntity, (offer) => offer.photos)
   offer: OfferEntity;
 }

@@ -36,7 +36,7 @@ export class UserEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  @OneToMany((type) => OfferEntity, (offer) => offer.author)
+  @OneToMany(() => OfferEntity, (offer) => offer.author)
   offers: OfferEntity[];
 
   @BeforeUpdate()

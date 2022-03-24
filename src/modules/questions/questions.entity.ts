@@ -19,9 +19,9 @@ export class QuestionsEntity {
   @Column()
   phone: string;
 
-  @ManyToOne((type) => OfferEntity, (offer) => offer.id)
+  @ManyToOne(() => OfferEntity, (offer) => offer.id)
   offer: OfferEntity;
 
-  @ManyToOne((type) => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.id)
   user: OfferEntity;
 }
