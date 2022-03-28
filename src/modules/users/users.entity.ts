@@ -18,8 +18,11 @@ export class UserEntity {
   @Column()
   last_name: string;
 
-  @Column()
+  @Column({ unique: true, nullable: false })
   email: string;
+
+  @Column({ nullable: false })
+  password: string;
 
   @Column()
   phone: number;

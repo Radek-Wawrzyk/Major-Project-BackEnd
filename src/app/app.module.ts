@@ -15,6 +15,7 @@ import { OffersModule } from '../modules/offers/offers.module';
 import { PhotosModule } from '../modules/photos/photos.module';
 import { FavoriteOffersModule } from '../modules/favorite-offers/favorite-offers.module';
 import { QuestionsModule } from '../modules/questions/questions.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { QuestionsModule } from '../modules/questions/questions.module';
       database: process.env.DB_NAME,
       synchronize: true,
       entities: [
+        AuthModule,
         OfferEntity,
         UserEntity,
         PhotoEntity,
@@ -35,6 +37,7 @@ import { QuestionsModule } from '../modules/questions/questions.module';
         QuestionsEntity,
       ],
     }),
+    AuthModule,
     OffersModule,
     UsersModule,
     PhotosModule,
