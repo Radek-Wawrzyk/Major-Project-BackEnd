@@ -2,6 +2,7 @@ interface UserRegisterDto {
   id: number;
   first_name: string;
   last_name: string;
+  password?: string;
   email: string;
   phone: number;
   avatar_url?: string | null;
