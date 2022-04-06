@@ -99,22 +99,25 @@ export class OfferEntity {
   rule_no_animals: boolean;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  created_at: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-
-  @BeforeUpdate()
-  updateTimestamp() {
-    this.updatedAt = new Date();
-  }
+  updated_at: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  publishedDate: Date;
+  published_date: Date;
 
   @OneToMany(() => PhotoEntity, (photo) => photo.offer)
   photos: PhotoEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.offers)
   author: UserEntity;
+
+  @Column({ nullable: false })
+  author_id: number;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updated_at = new Date();
+  }
 }
