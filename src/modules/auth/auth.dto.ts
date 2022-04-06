@@ -1,5 +1,12 @@
-interface AuthLogin {
+import { IsEmail, IsString, Min } from 'class-validator';
+
+class AuthLogin {
+  @IsEmail()
+  @IsString()
   email: string;
+
+  @IsString()
+  @Min(1)
   password: string;
 }
 

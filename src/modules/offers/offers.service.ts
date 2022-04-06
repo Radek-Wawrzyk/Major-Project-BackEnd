@@ -27,7 +27,7 @@ export class OffersService {
     return 1;
   }
 
-  create(offer: OffersDto): any {
+  create(offer: OfferEntity): any {
     const newOffer = this.offerRepository.create(offer);
     return this.offerRepository.save(newOffer);
   }

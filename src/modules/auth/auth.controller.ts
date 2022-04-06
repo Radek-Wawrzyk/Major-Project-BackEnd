@@ -20,7 +20,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/secure')
-  testUser(@Request() request): any {
+  testUser(@Request() request) {
     return request.user;
   }
 }
