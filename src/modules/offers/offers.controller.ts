@@ -8,10 +8,8 @@ import {
   Param,
   Delete,
   Put,
-  Req,
   Query,
 } from '@nestjs/common';
-import { Request as ExpressRequest } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateOfferDto, OfferDto } from './offers.dto';
 import { OffersService } from './offers.service';

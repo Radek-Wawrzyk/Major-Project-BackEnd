@@ -18,9 +18,15 @@ export class OffersService {
   async findAll(params: any): Promise<OfferEntity[]> {
     let databaseQuery = this.offerRepository.createQueryBuilder('offers');
 
+    if (params.userId) {
+      databaseQuery = databaseQuery.andWhere('offers.author_id = :userId', {
+        userId: params.userId,
+      });
+    }
+
     if (params.search) {
       databaseQuery = databaseQuery.andWhere('offers.name like :search', {
-        search: params.search,
+        search: `%${params.search}%`,
       });
     }
 
