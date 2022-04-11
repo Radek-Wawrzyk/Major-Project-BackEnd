@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateOfferDto, OfferDto } from './offers.dto';
@@ -29,8 +30,9 @@ export class OffersController {
   }
 
   @Get('/')
-  async getAllOffers() {
-    return await this.offersService.findAll();
+  async getAllOffers(@Query() query) {
+    console.log(query);
+    return await this.offersService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard)
