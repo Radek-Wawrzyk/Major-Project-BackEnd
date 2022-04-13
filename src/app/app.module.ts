@@ -16,10 +16,14 @@ import { PhotosModule } from '../modules/photos/photos.module';
 import { FavoriteOffersModule } from '../modules/favorite-offers/favorite-offers.module';
 import { QuestionsModule } from '../modules/questions/questions.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    MulterModule.register({
+      dest: '../uploads',
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,

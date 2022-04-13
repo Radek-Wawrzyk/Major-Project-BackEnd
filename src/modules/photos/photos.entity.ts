@@ -12,6 +12,9 @@ export class PhotoEntity {
   @Column()
   alt: string;
 
+  @Column({ nullable: false, default: false })
+  is_primary: boolean;
+
   @ManyToOne(() => OfferEntity, (offer) => offer.photos)
-  offer: OfferEntity;
+  offer_id: OfferEntity['id'];
 }
