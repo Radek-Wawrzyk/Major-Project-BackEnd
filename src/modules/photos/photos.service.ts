@@ -30,10 +30,17 @@ export class PhotosService {
       throw new BadRequestException('invalid file provided');
     }
 
+    // Fetch all offer photos for setting is_primary value,
+    // when there is no photos, then is_primary field should be set as true
+    const offerPhotos: PhotoEntity[] = await this.photoRepository
+      .createQueryBuilder('photo')
+      .where('photo.offer = :id', { id: offerId })
+      .getMany();
+
     const newFile = this.photoRepository.create({
       url: file.path,
-      alt: file.filename,
-      is_primary: false,
+      name: file.filename,
+      is_primary: offerPhotos && offerPhotos.length ? false : true,
       offer: offerId,
     });
 
@@ -65,7 +72,7 @@ export class PhotosService {
     const photo: PhotoEntity = {
       ...oldPhoto,
       url: file.path,
-      alt: file.filename,
+      name: file.filename,
     };
 
     return await this.photoRepository.save(photo);
@@ -123,6 +130,6 @@ export class PhotosService {
 
   async findImage(photoId: number): Promise<string> {
     const photo: PhotoEntity = await this.findOne(photoId);
-    return join(process.cwd(), `uploads/photos/${photo.alt}`);
+    return join(process.cwd(), `uploads/photos/${photo.name}`);
   }
 }

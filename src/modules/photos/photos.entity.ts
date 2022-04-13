@@ -10,7 +10,7 @@ export class PhotoEntity {
   url: string;
 
   @Column()
-  alt: string;
+  name: string;
 
   @Column({ nullable: false, default: false })
   is_primary: boolean;
