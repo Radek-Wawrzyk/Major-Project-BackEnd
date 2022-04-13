@@ -107,7 +107,7 @@ export class OfferEntity {
   @Column({ type: 'timestamp', nullable: true })
   published_date: Date;
 
-  @OneToMany(() => PhotoEntity, (photo) => photo.offer_id)
+  @OneToMany(() => PhotoEntity, (photo) => photo.offer)
   photos: PhotoEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.offers)

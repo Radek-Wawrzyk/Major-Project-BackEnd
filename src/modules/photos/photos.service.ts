@@ -23,7 +23,7 @@ export class PhotosService {
       url: file.path,
       alt: file.filename,
       is_primary: false,
-      offer_id: offerId,
+      offer: offerId,
     });
 
     return this.photoRepository.save(newFile);

@@ -16,5 +16,5 @@ export class PhotoEntity {
   is_primary: boolean;
 
   @ManyToOne(() => OfferEntity, (offer) => offer.photos)
-  offer_id: OfferEntity['id'];
+  offer: OfferEntity['id'];
 }
