@@ -8,7 +8,6 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  BadRequestException,
   Req,
   Res,
   Param,
@@ -16,11 +15,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PhotosService } from './photos.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { removeFile, saveImageToStorage } from 'src/helpers/image-storage';
-import { join } from 'path';
-import { app } from 'src/main';
-import { PhotoEntity } from './photos.entity';
-import { PhotoPrimaryPayload } from './photos.interface';
+import { PhotoRequest, saveImageToStorage } from 'src/helpers/image-storage';
+import { PhotoCreateDto, PhotoPrimaryDto, PhotoUpdateDto } from './photos.dto';
+import { Response } from 'express';
 
 @Controller('photos')
 export class PhotosController {
@@ -30,82 +27,54 @@ export class PhotosController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   uploadPhoto(
-    @Req() req,
+    @Req() request: PhotoRequest,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body,
+    @Body() photoCreateDetails: PhotoCreateDto,
   ) {
-    if (!file || req.fileValidationError) {
-      throw new BadRequestException('invalid file provided');
-    }
-
-    return this.photosService.create(file, parseInt(body.offer_id));
+    return this.photosService.create(
+      file,
+      photoCreateDetails.offerId,
+      request.fileValidationError,
+    );
   }
 
   @Put('/update')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   async editPhoto(
-    @Req() req,
+    @Req() request: PhotoRequest,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body,
+    @Body() photoUpdateDetails: PhotoUpdateDto,
   ) {
-    if (!file || req.fileValidationError) {
-      throw new BadRequestException('invalid file provided');
-    }
-
-    const photos = await this.photosService.update(
+    return await this.photosService.update(
       file,
-      parseInt(body.photo_id),
+      photoUpdateDetails.photoId,
+      request.fileValidationError,
     );
-
-    const imagesFolderPath: string = join(process.cwd(), '');
-    const fullImagePath: string = join(
-      `${imagesFolderPath}/${photos.oldPhoto.url}`,
-    );
-
-    if (photos.oldPhoto) {
-      removeFile(fullImagePath);
-    }
-
-    return photos.photo;
   }
 
   @Get('/get-source/:id')
   @UseGuards(JwtAuthGuard)
-  async getSourcePhoto(@Res() res, @Param('id') id: string) {
-    const photo = await this.photosService.findOne(parseInt(id));
-
-    return res.sendFile(join(process.cwd(), `uploads/photos/${photo.alt}`));
+  async getSourcePhoto(@Res() response: Response, @Param('id') id: string) {
+    const photoLink: string = await this.photosService.findImage(parseInt(id));
+    return response.sendFile(photoLink);
   }
 
   @Get('/get-link/:id')
   @UseGuards(JwtAuthGuard)
   async getPhotoLink(@Param('id') id: string) {
-    const photo: PhotoEntity = await this.photosService.findOne(parseInt(id));
-    const appURL: string = await app.getUrl();
-
-    return `${appURL}/${photo.url}`;
+    return await this.photosService.findLink(parseInt(id));
   }
 
   @Delete('/delete/:id')
   @UseGuards(JwtAuthGuard)
   async removePhoto(@Param('id') id: string) {
-    const deletedPhoto: PhotoEntity = await this.photosService.remove(
-      parseInt(id),
-    );
-    const imagesFolderPath: string = join(process.cwd(), '');
-    const fullImagePath: string = join(
-      `${imagesFolderPath}/${deletedPhoto.url}`,
-    );
-
-    if (deletedPhoto) {
-      removeFile(fullImagePath);
-    }
+    return await this.photosService.remove(parseInt(id));
   }
 
   @Post('/set-primary')
   @UseGuards(JwtAuthGuard)
-  async setPhotoPrimary(@Body() photoDetails: PhotoPrimaryPayload) {
+  async setPhotoPrimary(@Body() photoDetails: PhotoPrimaryDto) {
     return await this.photosService.updatePrimaryPhoto(
       photoDetails.offerId,
       photoDetails.photoId,

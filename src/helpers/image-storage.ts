@@ -2,6 +2,11 @@ import { diskStorage } from 'multer';
 import { uuid } from '../helpers/index';
 import path = require('path');
 import * as fs from 'fs';
+import { Request } from 'express';
+
+interface PhotoRequest extends Request {
+  fileValidationError?: string;
+}
 
 type validFileExtension = 'png' | 'jpg' | 'jpeg';
 type validMimeType = 'image/png' | 'image/jpg' | 'image/jpeg';
@@ -43,8 +48,8 @@ const removeFile = (fullFilePath: string): void => {
   try {
     fs.unlinkSync(fullFilePath);
   } catch (err) {
-    console.log('err', err);
+    throw new Error(err);
   }
 };
 
-export { saveImageToStorage, removeFile };
+export { saveImageToStorage, removeFile, PhotoRequest };
