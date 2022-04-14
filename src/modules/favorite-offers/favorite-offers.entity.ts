@@ -8,11 +8,17 @@ export class FavoriteOffersEntity {
   id: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  addedAt: Date;
+  added_at: Date;
 
   @ManyToOne(() => OfferEntity, (offer) => offer.id)
   offer: OfferEntity;
 
+  @Column({ nullable: true })
+  offerId: number;
+
   @ManyToOne(() => UserEntity, (user) => user.id)
   user: OfferEntity;
+
+  @Column({ nullable: true })
+  userId: number;
 }
