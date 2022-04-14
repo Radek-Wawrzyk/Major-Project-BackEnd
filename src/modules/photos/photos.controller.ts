@@ -8,16 +8,17 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  Req,
   Res,
   Param,
+  Request,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PhotosService } from './photos.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { PhotoRequest, saveImageToStorage } from 'src/helpers/image-storage';
+import { saveImageToStorage } from 'src/helpers/image-storage';
 import { PhotoCreateDto, PhotoPrimaryDto, PhotoUpdateDto } from './photos.dto';
 import { Response } from 'express';
+import { AppRequest } from 'src/types/request';
 
 @Controller('photos')
 export class PhotosController {
@@ -27,7 +28,7 @@ export class PhotosController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   uploadPhoto(
-    @Req() request: PhotoRequest,
+    @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body() photoCreateDetails: PhotoCreateDto,
   ) {
@@ -42,7 +43,7 @@ export class PhotosController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   async editPhoto(
-    @Req() request: PhotoRequest,
+    @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body() photoUpdateDetails: PhotoUpdateDto,
   ) {

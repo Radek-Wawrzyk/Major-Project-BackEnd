@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PhotoRequest, saveImageToStorage } from 'src/helpers/image-storage';
+import { saveImageToStorage } from 'src/helpers/image-storage';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from './users.dto';
 import { UsersService } from './users.service';
@@ -56,14 +56,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('avatars')))
   async uploadUserAvatar(
-    @Req() req: PhotoRequest,
     @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.usersService.createAvatar(
       file,
       parseInt(request.user.id),
-      req.fileValidationError,
+      request.fileValidationError,
     );
   }
 
@@ -71,14 +70,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('avatars')))
   async editUserAvatar(
-    @Req() req: PhotoRequest,
     @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.usersService.editAvatar(
       file,
       parseInt(request.user.id),
-      req.fileValidationError,
+      request.fileValidationError,
     );
   }
 
