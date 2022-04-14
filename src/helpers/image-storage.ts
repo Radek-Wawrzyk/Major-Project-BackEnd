@@ -18,31 +18,59 @@ const validMimeTypes: validMimeType[] = [
   'image/jpeg',
 ];
 
-const saveImageToStorage = {
-  storage: diskStorage({
-    destination: './uploads/photos',
-    filename: (_, file, callback) => {
-      // Regex for deleteing white spaces from the name of the file
-      const filename = `${path
-        .parse(file.originalname)
-        .name.replace(/\s/g, '')}-${uuid()}`;
-      const extension: string = path.parse(file.originalname).ext;
+const saveImageToStorage = (folderName: string) => {
+  return {
+    storage: diskStorage({
+      destination: `./uploads/${folderName}`,
+      filename: (_, file, callback) => {
+        // Regex for deleteing white spaces from the name of the file
+        const filename = `${path
+          .parse(file.originalname)
+          .name.replace(/\s/g, '')}-${uuid()}`;
+        const extension: string = path.parse(file.originalname).ext;
 
-      callback(null, `${filename}${extension}`);
+        callback(null, `${filename}${extension}`);
+      },
+    }),
+    fileFilter: (request, file, callback) => {
+      const allowedMimeTypes: validMimeType[] = validMimeTypes;
+
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        request.fileValidationError = 'Only image files are allowed';
+        callback(null, false);
+      } else callback(null, true);
     },
-  }),
-  fileFilter: (request, file, callback) => {
-    const allowedMimeTypes: validMimeType[] = validMimeTypes;
-
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      request.fileValidationError = 'Only image files are allowed';
-      callback(null, false);
-    } else callback(null, true);
-  },
-  limits: {
-    fileSize: 2097152, // 2MB
-  },
+    limits: {
+      fileSize: 2097152, // 2MB
+    },
+  };
 };
+
+// const saveImageToStorage = {
+//   storage: diskStorage({
+//     destination: './uploads/photos',
+//     filename: (_, file, callback) => {
+//       // Regex for deleteing white spaces from the name of the file
+//       const filename = `${path
+//         .parse(file.originalname)
+//         .name.replace(/\s/g, '')}-${uuid()}`;
+//       const extension: string = path.parse(file.originalname).ext;
+
+//       callback(null, `${filename}${extension}`);
+//     },
+//   }),
+//   fileFilter: (request, file, callback) => {
+//     const allowedMimeTypes: validMimeType[] = validMimeTypes;
+
+//     if (!allowedMimeTypes.includes(file.mimetype)) {
+//       request.fileValidationError = 'Only image files are allowed';
+//       callback(null, false);
+//     } else callback(null, true);
+//   },
+//   limits: {
+//     fileSize: 2097152, // 2MB
+//   },
+// };
 
 const removeFile = (fullFilePath: string): void => {
   try {

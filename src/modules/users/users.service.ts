@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './users.entity';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
+import { join } from 'path';
+import { removeFile } from 'src/helpers/image-storage';
 
 @Injectable()
 export class UsersService {
@@ -55,6 +61,91 @@ export class UsersService {
     }
 
     user = { ...user, ...newUser };
+    return this.usersRepository.save(user);
+  }
+
+  async findWithOffers(userId: number): Promise<UserEntity> {
+    const userWithOffers: UserEntity = await this.usersRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        offers: true,
+      },
+    });
+
+    if (!userWithOffers) {
+      throw new NotFoundException('User not found');
+    }
+
+    return userWithOffers;
+  }
+
+  async createAvatar(
+    file: Express.Multer.File,
+    userId: number,
+    fileValidationError?: string,
+  ): Promise<UserEntity> {
+    if (!file || fileValidationError) {
+      throw new BadRequestException('invalid file provided');
+    }
+
+    let user: UserEntity = await this.findOne(userId);
+    user = {
+      ...user,
+      avatar_url: file.path,
+    };
+
+    return this.usersRepository.save(user);
+  }
+
+  async editAvatar(
+    file: Express.Multer.File,
+    userId: number,
+    fileValidationError?: string,
+  ): Promise<UserEntity> {
+    if (!file || fileValidationError) {
+      throw new BadRequestException('invalid file provided');
+    }
+
+    let user: UserEntity = await this.findOne(userId);
+
+    // Remove old photo
+    const imagesFolderPath: string = join(process.cwd(), '');
+    const fullImagePath: string = join(
+      `${imagesFolderPath}/${user.avatar_url}`,
+    );
+
+    if (imagesFolderPath && fullImagePath) {
+      removeFile(fullImagePath);
+    }
+
+    user = {
+      ...user,
+      avatar_url: file.path,
+    };
+
+    return this.usersRepository.save(user);
+  }
+
+  async removeAvatar(userId: number) {
+    let user: UserEntity = await this.findOne(userId);
+
+    // Remove old photo
+    const imagesFolderPath: string = join(process.cwd(), '');
+    const fullImagePath: string = join(
+      `${imagesFolderPath}/${user.avatar_url}`,
+    );
+
+    if (imagesFolderPath && fullImagePath) {
+      removeFile(fullImagePath);
+    }
+
+    user = {
+      ...user,
+      avatar_url: null,
+    };
+
     return this.usersRepository.save(user);
   }
 }

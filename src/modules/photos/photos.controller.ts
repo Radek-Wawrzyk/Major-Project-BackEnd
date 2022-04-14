@@ -25,7 +25,7 @@ export class PhotosController {
 
   @Post('/upload')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   uploadPhoto(
     @Req() request: PhotoRequest,
     @UploadedFile() file: Express.Multer.File,
@@ -40,7 +40,7 @@ export class PhotosController {
 
   @Put('/update')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   async editPhoto(
     @Req() request: PhotoRequest,
     @UploadedFile() file: Express.Multer.File,

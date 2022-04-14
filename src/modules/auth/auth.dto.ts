@@ -22,7 +22,7 @@ interface AuthTokenPayload {
   access_token: string;
 }
 
-class AuthTokenedUser {
+class AuthTokenedUserDto {
   id: string;
   first_name: string;
   last_name: string;
@@ -36,4 +36,4 @@ class AuthTokenedUser {
   exp: number;
 }
 
-export { AuthLogin, AuthRegister, AuthTokenPayload, AuthTokenedUser };
+export { AuthLogin, AuthRegister, AuthTokenPayload, AuthTokenedUserDto };

@@ -38,8 +38,6 @@ class UpdateUserDto {
 
   @IsDateString()
   updated_at: Date;
-
-  updateTimestamp: any;
 }
 
 class CreateUserDto {
