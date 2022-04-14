@@ -1,70 +1,94 @@
+import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
+
 class CreateOfferDto {
+  @IsNotEmpty()
+  @IsString()
   name: string;
+
+  @IsString()
   description: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
   status: boolean;
+
+  @IsNumber()
   price: number;
+
+  @IsNotEmpty()
+  @IsString()
   location_city: string;
+
+  @IsNotEmpty()
+  @IsString()
   location_country: string;
+
+  @IsNotEmpty()
+  @IsString()
   location_district: string;
+
+  @IsNumber()
   location_latidude: number;
+
+  @IsNumber()
   location_longitude: number;
+
+  @IsNumber()
   rooms_number: number;
+
+  @IsString()
   building_type: string;
+
+  @IsNumber()
   building_level: number;
+
+  @IsString()
   building_age: string;
+
+  @IsNumber()
   living_area: number;
+
+  @IsBoolean()
   includes_internet: boolean;
+
+  @IsBoolean()
   includes_house_phone: boolean;
+
+  @IsBoolean()
   includes_tv: boolean;
+
+  @IsBoolean()
   includes_air_conditioning: boolean;
+
+  @IsBoolean()
   includes_basement: boolean;
+
+  @IsBoolean()
   includes_garden: boolean;
+
+  @IsBoolean()
   includes_garage: boolean;
+
+  @IsBoolean()
   includes_parking_space: boolean;
+
+  @IsBoolean()
   includes_lift: boolean;
+
+  @IsBoolean()
   includes_balcony: boolean;
+
+  @IsBoolean()
   includes_washing_machine: boolean;
+
+  @IsBoolean()
   includes_smoke_detectors: boolean;
+
+  @IsBoolean()
   rule_no_smokers: boolean;
+
+  @IsBoolean()
   rule_no_animals: boolean;
-  author_id: string;
 }
 
-class OfferDto {
-  id: number;
-  name: string;
-  description: string;
-  status: boolean;
-  price: number;
-  location_city: string;
-  location_country: string;
-  location_district: string;
-  location_latidude: number;
-  location_longitude: number;
-  rooms_number: number;
-  building_type: string;
-  building_level: number;
-  building_age: string;
-  living_area: number;
-  includes_internet: boolean;
-  includes_house_phone: boolean;
-  includes_tv: boolean;
-  includes_air_conditioning: boolean;
-  includes_basement: boolean;
-  includes_garden: boolean;
-  includes_garage: boolean;
-  includes_parking_space: boolean;
-  includes_lift: boolean;
-  includes_balcony: boolean;
-  includes_washing_machine: boolean;
-  includes_smoke_detectors: boolean;
-  rule_no_smokers: boolean;
-  rule_no_animals: boolean;
-  created_at: Date | null;
-  updated_at: Date | null;
-  published_date: Date | null;
-  author_id: number;
-  updateTimestamp: any;
-}
-
-export { OfferDto, CreateOfferDto };
+export { CreateOfferDto };

@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { OfferEntity } from './offer.entity';
-import { CreateOfferDto, OfferDto } from './offers.dto';
+import { CreateOfferDto } from './offers.dto';
 
 @Injectable()
 export class OffersService {
@@ -16,7 +16,8 @@ export class OffersService {
   ) {}
 
   async findAll(params: any): Promise<OfferEntity[]> {
-    let databaseQuery = this.offerRepository.createQueryBuilder('offers');
+    let databaseQuery: SelectQueryBuilder<OfferEntity> =
+      this.offerRepository.createQueryBuilder('offers');
 
     if (params.userId) {
       databaseQuery = databaseQuery.andWhere('offers.author_id = :userId', {
@@ -233,22 +234,41 @@ export class OffersService {
       );
     }
 
-    const offers = await databaseQuery.getMany();
+    const offers: OfferEntity[] = await databaseQuery.getMany();
     return offers;
   }
 
   async findOne(id: number): Promise<OfferEntity> {
-    const offer = await this.offerRepository.findOneBy({ id });
+    const offer: OfferEntity = await this.offerRepository.findOneBy({ id });
     if (!offer) throw new NotFoundException('Offer not found');
 
     return offer;
   }
 
-  async delete(id: number, userId: number): Promise<OfferEntity> {
-    const offer = await this.offerRepository.findOneBy({ id });
-    if (!offer) throw new NotFoundException('Offer not found');
+  async findWithDetails(offerId: number): Promise<OfferEntity> {
+    const offerWithAllDetails: OfferEntity = await this.offerRepository.findOne(
+      {
+        where: {
+          id: offerId,
+        },
+        relations: {
+          author: true,
+          photos: true,
+        },
+      },
+    );
 
-    if (offer.author_id !== userId) {
+    if (!offerWithAllDetails) {
+      throw new NotFoundException('Offer not found');
+    }
+
+    return offerWithAllDetails;
+  }
+
+  async delete(offerId: number, userId: number): Promise<OfferEntity> {
+    const offer: OfferEntity = await this.findOne(offerId);
+
+    if (offer.authorId !== userId) {
       throw new ForbiddenException('You have no access to this offer');
     }
 
@@ -256,14 +276,17 @@ export class OffersService {
   }
 
   async update(
-    id: number,
+    offerId: number,
     userId: number,
-    newOffer: OfferDto,
-  ): Promise<OfferDto> {
-    let offer = await this.offerRepository.findOneBy({ id });
-    if (!offer) throw new NotFoundException('Offer not found');
+    newOffer: CreateOfferDto,
+  ): Promise<OfferEntity> {
+    let offer: OfferEntity = await this.findOne(offerId);
 
-    if (userId !== offer.author_id) {
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+
+    if (userId !== offer.authorId) {
       throw new ForbiddenException('You have no access to this offer');
     }
 
@@ -277,9 +300,9 @@ export class OffersService {
   }
 
   create(offer: CreateOfferDto, userId: number): Promise<OfferEntity> {
-    const newOffer = this.offerRepository.create({
+    const newOffer: OfferEntity = this.offerRepository.create({
       ...offer,
-      author_id: userId,
+      author: userId,
       published_date: offer.status ? new Date() : null,
     });
 

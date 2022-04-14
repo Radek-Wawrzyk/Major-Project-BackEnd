@@ -1,6 +1,6 @@
 import {
-  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -14,7 +14,7 @@ export class OfferEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   name: string;
 
   @Column({ default: '' })
@@ -23,16 +23,16 @@ export class OfferEntity {
   @Column({ default: false })
   status: boolean;
 
-  @Column()
+  @Column({ default: 0 })
   price: number;
 
-  @Column()
+  @Column({ nullable: false })
   location_city: string;
 
-  @Column()
+  @Column({ nullable: false })
   location_country: string;
 
-  @Column()
+  @Column({ nullable: false })
   location_district: string;
 
   @Column({ default: 0 })
@@ -53,7 +53,7 @@ export class OfferEntity {
   @Column({ default: '' })
   building_age: string;
 
-  @Column({ default: false })
+  @Column({ default: 0 })
   living_area: number;
 
   @Column({ default: false })
@@ -98,26 +98,33 @@ export class OfferEntity {
   @Column({ default: false })
   rule_no_animals: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   created_at: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   updated_at: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+    nullable: true,
+  })
   published_date: Date;
 
   @OneToMany(() => PhotoEntity, (photo) => photo.offer)
   photos: PhotoEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.offers)
-  author: UserEntity;
+  author: UserEntity['id'];
 
-  @Column({ nullable: false })
-  author_id: number;
-
-  @BeforeUpdate()
-  updateTimestamp() {
-    this.updated_at = new Date();
-  }
+  @Column({ nullable: true })
+  authorId: number;
 }
