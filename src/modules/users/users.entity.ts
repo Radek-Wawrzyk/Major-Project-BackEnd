@@ -24,7 +24,7 @@ export class UserEntity {
   @Column({ nullable: false })
   password: string;
 
-  @Column()
+  @Column({ nullable: false, type: 'bigint' })
   phone: number;
 
   @Column({ nullable: true })
