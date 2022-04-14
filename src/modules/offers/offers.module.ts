@@ -10,5 +10,6 @@ import { PhotosModule } from '../photos/photos.module';
   imports: [TypeOrmModule.forFeature([OfferEntity]), UsersModule, PhotosModule],
   controllers: [OffersController],
   providers: [OffersService],
+  exports: [OffersService],
 })
 export class OffersModule {}
