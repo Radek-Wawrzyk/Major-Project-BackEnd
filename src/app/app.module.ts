@@ -28,7 +28,7 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
       dest: '../uploads',
     }),
     SendGridModule.forRoot({
-      apikey: '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',
+      apikey: process.env.SENDGRID_API_KEY,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
