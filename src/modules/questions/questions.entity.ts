@@ -16,12 +16,18 @@ export class QuestionsEntity {
   @Column()
   email: string;
 
-  @Column()
-  phone: string;
+  @Column({ type: 'bigint' })
+  phone: number;
 
   @ManyToOne(() => OfferEntity, (offer) => offer.id)
   offer: OfferEntity;
 
+  @Column({ nullable: true })
+  offerId: number;
+
   @ManyToOne(() => UserEntity, (user) => user.id)
-  user: OfferEntity;
+  user: UserEntity;
+
+  @Column({ nullable: true })
+  userId: number;
 }

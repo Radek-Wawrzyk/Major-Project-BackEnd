@@ -18,11 +18,17 @@ import { QuestionsModule } from '../modules/questions/questions.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 
+// External modules
+import { SendGridModule } from '@anchan828/nest-sendgrid';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MulterModule.register({
       dest: '../uploads',
+    }),
+    SendGridModule.forRoot({
+      apikey: process.env.SENDGRID_API_KEY,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
