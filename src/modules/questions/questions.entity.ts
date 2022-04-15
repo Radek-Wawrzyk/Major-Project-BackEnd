@@ -17,7 +17,7 @@ export class QuestionsEntity {
   email: string;
 
   @Column({ type: 'bigint' })
-  phone: string;
+  phone: number;
 
   @ManyToOne(() => OfferEntity, (offer) => offer.id)
   offer: OfferEntity;
@@ -26,7 +26,7 @@ export class QuestionsEntity {
   offerId: number;
 
   @ManyToOne(() => UserEntity, (user) => user.id)
-  user: OfferEntity;
+  user: UserEntity;
 
   @Column({ nullable: true })
   userId: number;
