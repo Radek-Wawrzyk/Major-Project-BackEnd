@@ -10,6 +10,6 @@ export class StatsController {
   @Get('/dashboard')
   @UseGuards(JwtAuthGuard)
   getDashboardDetails(@Request() request: AppRequest) {
-    return this.statsService.findAllStats(parseInt(request.user.id));
+    return this.statsService.findDashboard(parseInt(request.user.id));
   }
 }

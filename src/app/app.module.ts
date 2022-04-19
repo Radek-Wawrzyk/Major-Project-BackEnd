@@ -8,6 +8,7 @@ import { UserEntity } from '../modules/users/users.entity';
 import { PhotoEntity } from '../modules/photos/photos.entity';
 import { FavoriteOffersEntity } from '../modules/favorite-offers/favorite-offers.entity';
 import { QuestionsEntity } from '../modules/questions/questions.entity';
+import { StatsEntity } from 'src/modules/stats/stats.entity';
 
 // Modules
 import { UsersModule } from '../modules/users/users.module';
@@ -21,7 +22,6 @@ import { StatsModule } from 'src/modules/stats/stats.module';
 // External modules
 import { SendGridModule } from '@anchan828/nest-sendgrid';
 import { MulterModule } from '@nestjs/platform-express';
-import { StatsEntity } from 'src/modules/stats/stats.entity';
 
 @Module({
   imports: [

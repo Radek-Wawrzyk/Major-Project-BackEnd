@@ -11,7 +11,7 @@ export class StatsService {
     private statsRepository: Repository<StatsEntity>,
   ) {}
 
-  async findAllStats(userId: number): Promise<any> {
+  async findDashboard(userId: number): Promise<any> {
     const monthlyNumberOfViews = await this.findNumberOfViewsByMonths(
       userId,
       1,
@@ -20,12 +20,14 @@ export class StatsService {
       userId,
       12,
     );
-    const percentageOfAppliedQuestions = await this.findPercentage(userId);
+    const percentageOfAllAppliedQuestionsEver = await this.findPercentage(
+      userId,
+    );
 
     return {
       monthlyNumberOfViews,
       yearlyNumberOfViews,
-      percentageOfAppliedQuestions,
+      percentageOfAllAppliedQuestionsEver,
     };
   }
 
