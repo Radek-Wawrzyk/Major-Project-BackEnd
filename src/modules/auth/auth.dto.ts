@@ -1,24 +1,52 @@
-import { IsEmail, IsString, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
-class AuthLogin {
+class AuthLoginDto {
   @IsEmail()
   @IsString()
   email: string;
 
   @IsString()
-  @Min(1)
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/, {
+    message: 'Your password is too weak',
+  })
   password: string;
 }
 
-interface AuthRegister {
+class AuthRegisterDto {
+  @IsString()
+  @IsNotEmpty()
   first_name: string;
+
+  @IsString()
+  @IsNotEmpty()
   last_name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
   email: string;
+
+  @IsString()
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/, {
+    message: 'Your password is too weak',
+  })
   password: string;
+
+  @IsNumber()
+  @IsNotEmpty()
   phone: number;
 }
 
-interface AuthTokenPayload {
+class AuthTokenDto {
   access_token: string;
 }
 
@@ -36,4 +64,4 @@ class AuthTokenedUserDto {
   exp: number;
 }
 
-export { AuthLogin, AuthRegister, AuthTokenPayload, AuthTokenedUserDto };
+export { AuthLoginDto, AuthRegisterDto, AuthTokenDto, AuthTokenedUserDto };

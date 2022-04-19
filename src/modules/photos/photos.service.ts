@@ -9,6 +9,7 @@ import { PhotoEntity } from './photos.entity';
 import { join } from 'path';
 import { removeFile } from 'src/helpers/image-storage';
 import { app } from 'src/main';
+import { PHOTOS_HTTP_RESPONSES } from './photos.enum';
 
 @Injectable()
 export class PhotosService {
@@ -23,11 +24,11 @@ export class PhotosService {
     fileValidationError?: string,
   ) {
     if (!offerId) {
-      throw new BadRequestException(`You have not send offer_id field`);
+      throw new BadRequestException(PHOTOS_HTTP_RESPONSES.NO_OFFER_ID);
     }
 
     if (!file || fileValidationError) {
-      throw new BadRequestException('invalid file provided');
+      throw new BadRequestException(PHOTOS_HTTP_RESPONSES.BAD_FILE);
     }
 
     // Fetch all offer photos for setting is_primary value,
@@ -53,11 +54,11 @@ export class PhotosService {
     fileValidationError?: string,
   ) {
     if (!photoId) {
-      throw new BadRequestException(`You have not send photo_id field`);
+      throw new BadRequestException(PHOTOS_HTTP_RESPONSES.NO_PHOTO_ID);
     }
 
     if (!file || fileValidationError) {
-      throw new BadRequestException('invalid file provided');
+      throw new BadRequestException(PHOTOS_HTTP_RESPONSES.BAD_FILE);
     }
 
     const oldPhoto: PhotoEntity = await this.findOne(photoId);
@@ -80,7 +81,7 @@ export class PhotosService {
 
   async findOne(id: number): Promise<PhotoEntity> {
     const photo: PhotoEntity = await this.photoRepository.findOneBy({ id });
-    if (!photo) throw new NotFoundException('Photo not found');
+    if (!photo) throw new NotFoundException(PHOTOS_HTTP_RESPONSES.NOT_FOUND);
 
     return photo;
   }

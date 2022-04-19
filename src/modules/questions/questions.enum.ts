@@ -4,9 +4,9 @@ const enum EMAIL_CONFIG {
   TEXT = 'Hey, you have got a new question regarding your offer!',
 }
 
-const enum QUESTIONS_ERROR_RESPONSES {
+const enum QUESTIONS_HTTP_RESPONSES {
   NOT_FOUND = 'The question has been not found',
   FORBIDDEN = 'You have no accesss to this resource',
 }
 
-export { EMAIL_CONFIG, QUESTIONS_ERROR_RESPONSES };
+export { EMAIL_CONFIG, QUESTIONS_HTTP_RESPONSES };

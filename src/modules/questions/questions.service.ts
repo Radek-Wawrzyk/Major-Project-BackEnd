@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './questions.dto';
 import { QuestionsEntity } from './questions.entity';
 import { SendGridService } from '@anchan828/nest-sendgrid';
-import { EMAIL_CONFIG, QUESTIONS_ERROR_RESPONSES } from './questions.enum';
+import { EMAIL_CONFIG, QUESTIONS_HTTP_RESPONSES } from './questions.enum';
 import { renderQuestionEmailTemplate } from 'src/helpers/mailing-messages';
 
 @Injectable()
@@ -70,7 +70,7 @@ export class QuestionsService {
     });
 
     if (!question) {
-      throw new NotFoundException(QUESTIONS_ERROR_RESPONSES.NOT_FOUND);
+      throw new NotFoundException(QUESTIONS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     return question;
@@ -90,7 +90,7 @@ export class QuestionsService {
     const question: QuestionsEntity = await this.findOne(questionId);
 
     if (question.userId !== userId) {
-      throw new ForbiddenException(QUESTIONS_ERROR_RESPONSES.FORBIDDEN);
+      throw new ForbiddenException(QUESTIONS_HTTP_RESPONSES.FORBIDDEN);
     }
 
     return this.questionRepository.remove(question);

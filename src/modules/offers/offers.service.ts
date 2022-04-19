@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { OfferEntity } from './offer.entity';
 import { CreateOfferDto } from './offers.dto';
+import { OFFERS_HTTP_RESPONSES } from './offers.enum';
 
 @Injectable()
 export class OffersService {
@@ -240,7 +241,7 @@ export class OffersService {
 
   async findOne(id: number): Promise<OfferEntity> {
     const offer: OfferEntity = await this.offerRepository.findOneBy({ id });
-    if (!offer) throw new NotFoundException('Offer not found');
+    if (!offer) throw new NotFoundException(OFFERS_HTTP_RESPONSES.NOT_FOUND);
 
     return offer;
   }
@@ -259,7 +260,7 @@ export class OffersService {
     );
 
     if (!offerWithAllDetails) {
-      throw new NotFoundException('Offer not found');
+      throw new NotFoundException(OFFERS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     return offerWithAllDetails;
@@ -269,7 +270,7 @@ export class OffersService {
     const offer: OfferEntity = await this.findOne(offerId);
 
     if (offer.authorId !== userId) {
-      throw new ForbiddenException('You have no access to this offer');
+      throw new ForbiddenException(OFFERS_HTTP_RESPONSES.FORBIDDEN);
     }
 
     return this.offerRepository.remove(offer);
@@ -283,11 +284,11 @@ export class OffersService {
     let offer: OfferEntity = await this.findOne(offerId);
 
     if (!offer) {
-      throw new NotFoundException('Offer not found');
+      throw new NotFoundException(OFFERS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     if (userId !== offer.authorId) {
-      throw new ForbiddenException('You have no access to this offer');
+      throw new ForbiddenException(OFFERS_HTTP_RESPONSES.FORBIDDEN);
     }
 
     offer = {

@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OffersService } from '../offers/offers.service';
 import { FavoriteOffersEntity } from './favorite-offers.entity';
+import { FAVORITE_OFFERS_HTTP_RESPONSES } from './favorite-offers.enum';
 
 @Injectable()
 export class FavoriteOffersService {
@@ -46,14 +47,14 @@ export class FavoriteOffersService {
       });
 
     if (!favoriteOffer) {
-      throw new NotFoundException('Offer not found');
+      throw new NotFoundException(FAVORITE_OFFERS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     return favoriteOffer;
   }
 
   async create(userId: number, offerId: number): Promise<FavoriteOffersEntity> {
-    // If the offer is null, then it would trigger 404 bad exception response
+    // If the offer is null, then it would trigger 404 not found response
     await this.offersService.findOne(offerId);
 
     const favoriteOffer: FavoriteOffersEntity =
@@ -77,11 +78,11 @@ export class FavoriteOffersService {
       });
 
     if (!favoriteOffer) {
-      throw new NotFoundException('Favorite offer not found');
+      throw new NotFoundException(FAVORITE_OFFERS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     if (userId !== favoriteOffer.userId) {
-      throw new ForbiddenException('You have no access to this favorite offer');
+      throw new ForbiddenException(FAVORITE_OFFERS_HTTP_RESPONSES.FORBIDDEN);
     }
 
     return this.favoriteOffersRepository.remove(favoriteOffer);

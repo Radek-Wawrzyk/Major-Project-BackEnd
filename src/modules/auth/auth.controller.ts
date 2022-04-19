@@ -1,7 +1,8 @@
 import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
+import { AppRequest } from 'src/types/request';
+import { AuthRegisterDto } from './auth.dto';
 import { LocalAuthGuard } from './auth.local.guard';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -9,18 +10,12 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  loginUser(@Request() request) {
+  loginUser(@Request() request: AppRequest) {
     return this.authService.login(request.user);
   }
 
   @Post('/register')
-  registerUser(@Request() request) {
-    return this.authService.register(request.body);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('/secure')
-  testUser(@Request() request) {
-    return request.user;
+  registerUser(@Body() registerDetails: AuthRegisterDto) {
+    return this.authService.register(registerDetails);
   }
 }

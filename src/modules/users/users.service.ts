@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
 import { join } from 'path';
 import { removeFile } from 'src/helpers/image-storage';
+import { USERS_HTTP_RESPONSES } from './users.enum';
 
 @Injectable()
 export class UsersService {
@@ -25,12 +27,16 @@ export class UsersService {
       password: hashedPassword,
     });
 
-    return this.usersRepository.save(newUser);
+    try {
+      return await this.usersRepository.save(newUser);
+    } catch (err) {
+      throw new ConflictException(USERS_HTTP_RESPONSES.EMAIL_CONFLICT);
+    }
   }
 
   async findOne(id: number): Promise<UserEntity> {
     const user: UserEntity = await this.usersRepository.findOneBy({ id });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException(USERS_HTTP_RESPONSES.NOT_FOUND);
 
     return user;
   }
@@ -42,7 +48,7 @@ export class UsersService {
       },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException(USERS_HTTP_RESPONSES.NOT_FOUND);
     return user;
   }
 
@@ -75,7 +81,7 @@ export class UsersService {
     });
 
     if (!userWithOffers) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(USERS_HTTP_RESPONSES.NOT_FOUND);
     }
 
     return userWithOffers;
@@ -87,7 +93,7 @@ export class UsersService {
     fileValidationError?: string,
   ): Promise<UserEntity> {
     if (!file || fileValidationError) {
-      throw new BadRequestException('invalid file provided');
+      throw new BadRequestException(USERS_HTTP_RESPONSES.BAD_FILE);
     }
 
     let user: UserEntity = await this.findOne(userId);
@@ -105,7 +111,7 @@ export class UsersService {
     fileValidationError?: string,
   ): Promise<UserEntity> {
     if (!file || fileValidationError) {
-      throw new BadRequestException('invalid file provided');
+      throw new BadRequestException(USERS_HTTP_RESPONSES.BAD_FILE);
     }
 
     let user: UserEntity = await this.findOne(userId);
