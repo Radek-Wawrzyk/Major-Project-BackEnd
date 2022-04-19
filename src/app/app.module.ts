@@ -8,6 +8,7 @@ import { UserEntity } from '../modules/users/users.entity';
 import { PhotoEntity } from '../modules/photos/photos.entity';
 import { FavoriteOffersEntity } from '../modules/favorite-offers/favorite-offers.entity';
 import { QuestionsEntity } from '../modules/questions/questions.entity';
+import { StatsEntity } from 'src/modules/stats/stats.entity';
 
 // Modules
 import { UsersModule } from '../modules/users/users.module';
@@ -46,6 +47,7 @@ import { MulterModule } from '@nestjs/platform-express';
         PhotoEntity,
         FavoriteOffersEntity,
         QuestionsEntity,
+        StatsEntity,
       ],
     }),
     AuthModule,

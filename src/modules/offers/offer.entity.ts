@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PhotoEntity } from '../photos/photos.entity';
+import { StatsEntity } from '../stats/stats.entity';
 import { UserEntity } from '../users/users.entity';
 
 @Entity()
@@ -127,4 +128,7 @@ export class OfferEntity {
 
   @Column({ nullable: true })
   authorId: number;
+
+  @OneToMany(() => StatsEntity, (stats) => stats.offer)
+  stats: StatsEntity[];
 }

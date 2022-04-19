@@ -10,6 +10,7 @@ import { QuestionsEntity } from './questions.entity';
 import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EMAIL_CONFIG, QUESTIONS_HTTP_RESPONSES } from './questions.enum';
 import { renderQuestionEmailTemplate } from 'src/helpers/mailing-messages';
+import { StatsService } from '../stats/stats.service';
 
 @Injectable()
 export class QuestionsService {
@@ -17,6 +18,7 @@ export class QuestionsService {
     @InjectRepository(QuestionsEntity)
     private questionRepository: Repository<QuestionsEntity>,
     private readonly sendGrid: SendGridService,
+    private readonly statsService: StatsService,
   ) {}
 
   async create(question: CreateQuestionDto): Promise<QuestionsEntity> {
@@ -36,6 +38,13 @@ export class QuestionsService {
           offer: true,
         },
       });
+
+    // Create stats record for the dashboard
+    await this.statsService.create(
+      question.userId,
+      question.offerId,
+      'question',
+    );
 
     // SendGrid mailing action
     try {

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+import { StatsService } from '../stats/stats.service';
 import { OfferEntity } from './offer.entity';
 import {
   CreateOfferDto,
@@ -19,6 +20,7 @@ export class OffersService {
   constructor(
     @InjectRepository(OfferEntity)
     private offerRepository: Repository<OfferEntity>,
+    private statsService: StatsService,
   ) {}
 
   async findAll(params: any): Promise<OffersResponseDto> {
@@ -291,6 +293,13 @@ export class OffersService {
     if (!offerWithAllDetails) {
       throw new NotFoundException(OFFERS_HTTP_RESPONSES.NOT_FOUND);
     }
+
+    // Create stats record for the dashboard
+    await this.statsService.create(
+      offerWithAllDetails.authorId,
+      offerId,
+      'view',
+    );
 
     return offerWithAllDetails;
   }

@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OfferEntity } from '../offers/offer.entity';
+import { StatsEntity } from '../stats/stats.entity';
 
 @Entity()
 export class UserEntity {
@@ -48,4 +49,7 @@ export class UserEntity {
 
   @OneToMany(() => OfferEntity, (offer) => offer.author)
   offers: OfferEntity[];
+
+  @OneToMany(() => StatsEntity, (stats) => stats.author)
+  stats: StatsEntity[];
 }
