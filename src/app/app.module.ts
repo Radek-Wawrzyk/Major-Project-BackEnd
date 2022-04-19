@@ -21,6 +21,7 @@ import { StatsModule } from 'src/modules/stats/stats.module';
 // External modules
 import { SendGridModule } from '@anchan828/nest-sendgrid';
 import { MulterModule } from '@nestjs/platform-express';
+import { StatsEntity } from 'src/modules/stats/stats.entity';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MulterModule } from '@nestjs/platform-express';
         PhotoEntity,
         FavoriteOffersEntity,
         QuestionsEntity,
+        StatsEntity,
       ],
     }),
     AuthModule,
