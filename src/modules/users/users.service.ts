@@ -69,6 +69,14 @@ export class UsersService {
     user = { ...user, ...newUser };
     return this.usersRepository.save(user);
   }
+  async updatePassword(newPasssword: string, userId: number): Promise<boolean> {
+    let user: UserEntity = await this.findOne(userId);
+    const hashedPassword: string = await bcrypt.hash(newPasssword, 12);
+
+    user = { ...user, password: hashedPassword };
+    await this.usersRepository.save(user);
+    return true;
+  }
 
   async findWithOffers(userId: number): Promise<UserEntity> {
     const userWithOffers: UserEntity = await this.usersRepository.findOne({

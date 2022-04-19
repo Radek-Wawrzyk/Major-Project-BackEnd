@@ -16,10 +16,11 @@ import { PhotosModule } from '../modules/photos/photos.module';
 import { FavoriteOffersModule } from '../modules/favorite-offers/favorite-offers.module';
 import { QuestionsModule } from '../modules/questions/questions.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { MulterModule } from '@nestjs/platform-express';
+import { StatsModule } from 'src/modules/stats/stats.module';
 
 // External modules
 import { SendGridModule } from '@anchan828/nest-sendgrid';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
     PhotosModule,
     FavoriteOffersModule,
     QuestionsModule,
+    StatsModule,
   ],
 })
 export class AppModule {}
