@@ -6,7 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { OfferEntity } from './offer.entity';
-import { CreateOfferDto } from './offers.dto';
+import {
+  CreateOfferDto,
+  OffersPaginationDto,
+  OffersSortingDto,
+  OffersResponseDto,
+} from './offers.dto';
 import { OFFERS_HTTP_RESPONSES } from './offers.enum';
 
 @Injectable()
@@ -16,7 +21,7 @@ export class OffersService {
     private offerRepository: Repository<OfferEntity>,
   ) {}
 
-  async findAll(params: any): Promise<OfferEntity[]> {
+  async findAll(params: any): Promise<OffersResponseDto> {
     let databaseQuery: SelectQueryBuilder<OfferEntity> =
       this.offerRepository.createQueryBuilder('offers');
 
@@ -235,8 +240,32 @@ export class OffersService {
       );
     }
 
-    const offers: OfferEntity[] = await databaseQuery.getMany();
-    return offers;
+    // Pagination & sorting part
+    const pagination: OffersPaginationDto = {
+      page: parseInt(params.page) || 1,
+      limit: parseInt(params.limit) || 10,
+    };
+    const sorting: OffersSortingDto = {
+      field: params.sortingField || 'created_at',
+      order: params.sortingOrder || 'ASC',
+    };
+    const skippedItems: number = (pagination.page - 1) * pagination.limit;
+
+    const [offers, totalCount] = await databaseQuery
+      .offset(skippedItems)
+      .limit(pagination.limit)
+      .orderBy(`${sorting.field}`, sorting.order === 'ASC' ? 'ASC' : 'DESC')
+      .getManyAndCount();
+
+    const totalPages: number = Math.ceil(totalCount / pagination.limit);
+
+    return {
+      totalCount: totalCount,
+      totalPages: totalPages,
+      limit: pagination.limit,
+      page: pagination.page,
+      data: offers,
+    };
   }
 
   async findOne(id: number): Promise<OfferEntity> {

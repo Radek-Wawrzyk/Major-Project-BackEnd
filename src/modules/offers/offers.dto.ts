@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { OfferEntity } from './offer.entity';
 
 class CreateOfferDto {
   @IsNotEmpty()
@@ -91,4 +92,27 @@ class CreateOfferDto {
   rule_no_animals: boolean;
 }
 
-export { CreateOfferDto };
+class OffersPaginationDto {
+  page: number;
+  limit: number;
+}
+
+class OffersSortingDto {
+  field: string;
+  order: 'ASC' | 'DESC';
+}
+
+class OffersResponseDto {
+  totalCount: number;
+  totalPages: number;
+  limit: number;
+  page: number;
+  data: OfferEntity[];
+}
+
+export {
+  CreateOfferDto,
+  OffersResponseDto,
+  OffersPaginationDto,
+  OffersSortingDto,
+};

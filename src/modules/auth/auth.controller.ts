@@ -1,6 +1,10 @@
 import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { AppRequest } from 'src/types/request';
-import { AuthForgotPasswordDto, AuthRegisterDto, AuthResetPasswordDto } from './auth.dto';
+import {
+  AuthForgotPasswordDto,
+  AuthRegisterDto,
+  AuthResetPasswordDto,
+} from './auth.dto';
 import { LocalAuthGuard } from './auth.local.guard';
 import { AuthService } from './auth.service';
 
