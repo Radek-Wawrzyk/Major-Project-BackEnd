@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsBoolean,
+  MaxLength,
+} from 'class-validator';
 import { OfferEntity } from './offer.entity';
 
 class CreateOfferDto {
@@ -7,6 +13,9 @@ class CreateOfferDto {
   name: string;
 
   @IsString()
+  @MaxLength(3000, {
+    message: 'Your description is too long. Max character limit is set to 3000',
+  })
   description: string;
 
   @IsBoolean()
@@ -14,7 +23,12 @@ class CreateOfferDto {
   status: boolean;
 
   @IsNumber()
+  @IsNotEmpty()
   price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  deposit: number;
 
   @IsNotEmpty()
   @IsString()
@@ -26,13 +40,11 @@ class CreateOfferDto {
 
   @IsNotEmpty()
   @IsString()
-  location_district: string;
+  location_street: string;
 
-  @IsNumber()
-  location_latidude: number;
-
-  @IsNumber()
-  location_longitude: number;
+  @IsNotEmpty()
+  @IsString()
+  location_post_code: string;
 
   @IsNumber()
   rooms_number: number;

@@ -10,13 +10,19 @@ export class FavoriteOffersEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   added_at: Date;
 
-  @ManyToOne(() => OfferEntity, (offer) => offer.id)
+  @ManyToOne(() => OfferEntity, (offer) => offer.id, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   offer: OfferEntity;
 
   @Column({ nullable: true })
   offerId: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.id, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   user: OfferEntity;
 
   @Column({ nullable: true })

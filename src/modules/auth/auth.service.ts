@@ -58,7 +58,7 @@ export class AuthService {
         expiresIn: '7d',
       },
     );
-    const serverAddress = `${process.env.FRONT_END_URL}/auth/reset-passsword?token=${token}`;
+    const serverAddress = `${process.env.FRONT_END_URL}/auth/reset-password?token=${token}`;
 
     try {
       await this.sendGrid.send({
@@ -66,11 +66,7 @@ export class AuthService {
         from: AUTH_EMAIL_CONFIG.FROM,
         subject: AUTH_EMAIL_CONFIG.SUBJECT,
         text: AUTH_EMAIL_CONFIG.TEXT,
-        html: renderResetPasswordEmailTemplate(
-          serverAddress,
-          user.first_name,
-          token,
-        ),
+        html: renderResetPasswordEmailTemplate(serverAddress, user.first_name),
       });
 
       return 'success';

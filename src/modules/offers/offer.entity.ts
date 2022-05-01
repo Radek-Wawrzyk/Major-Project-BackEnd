@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,7 +19,7 @@ export class OfferEntity {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ default: '' })
+  @Column({ type: 'longtext', nullable: false })
   description: string;
 
   @Column({ default: false })
@@ -27,6 +28,9 @@ export class OfferEntity {
   @Column({ default: 0 })
   price: number;
 
+  @Column({ default: 0 })
+  deposit: number;
+
   @Column({ nullable: false })
   location_city: string;
 
@@ -34,13 +38,10 @@ export class OfferEntity {
   location_country: string;
 
   @Column({ nullable: false })
-  location_district: string;
+  location_street: string;
 
-  @Column({ default: 0 })
-  location_latidude: number;
-
-  @Column({ default: 0 })
-  location_longitude: number;
+  @Column({ nullable: false })
+  location_post_code: string;
 
   @Column({ default: 0 })
   rooms_number: number;
@@ -123,7 +124,10 @@ export class OfferEntity {
   @OneToMany(() => PhotoEntity, (photo) => photo.offer)
   photos: PhotoEntity[];
 
-  @ManyToOne(() => UserEntity, (user) => user.offers)
+  @ManyToOne(() => UserEntity, (user) => user.offers, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   author: UserEntity['id'];
 
   @Column({ nullable: true })

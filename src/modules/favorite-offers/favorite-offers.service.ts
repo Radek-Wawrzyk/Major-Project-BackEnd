@@ -1,9 +1,12 @@
 import {
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationResponse } from 'src/types/response';
 import { Repository } from 'typeorm';
 import { OffersService } from '../offers/offers.service';
 import { FavoriteOffersEntity } from './favorite-offers.entity';
@@ -17,18 +20,37 @@ export class FavoriteOffersService {
     private offersService: OffersService,
   ) {}
 
-  async findAll(userId: number): Promise<FavoriteOffersEntity[]> {
-    const favoriteOffers: FavoriteOffersEntity[] =
-      await this.favoriteOffersRepository.find({
+  async findAll(userId: number, params: any): Promise<PaginationResponse> {
+    const pagination = {
+      page: parseInt(params.page) || 1,
+      limit: parseInt(params.limit) || 8,
+    };
+
+    const skippedItems: number = (pagination.page - 1) * pagination.limit;
+
+    const [favoriteOffers, totalCount] =
+      await this.favoriteOffersRepository.findAndCount({
         where: {
           userId: userId,
         },
-        relations: {
-          offer: true,
-        },
+        relations: ['offer', 'offer.photos'],
+        skip: skippedItems,
+        take: pagination.limit,
       });
 
-    return favoriteOffers;
+    const totalPages: number = Math.ceil(totalCount / pagination.limit);
+
+    return {
+      totalCount: !favoriteOffers.length ? 0 : totalCount,
+      totalPages: totalPages,
+      limit: pagination.limit,
+      page: pagination.page,
+      data: favoriteOffers,
+    };
+  }
+
+  lol() {
+    console.log('l0l')
   }
 
   async findOne(

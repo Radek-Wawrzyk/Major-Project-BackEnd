@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { OfferEntity } from '../offers/offer.entity';
 import { UserEntity } from '../users/users.entity';
 
@@ -16,18 +22,30 @@ export class QuestionsEntity {
   @Column()
   email: string;
 
-  @Column({ type: 'bigint' })
-  phone: number;
+  @Column()
+  phone: string;
 
-  @ManyToOne(() => OfferEntity, (offer) => offer.id)
+  @ManyToOne(() => OfferEntity, (offer) => offer.id, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   offer: OfferEntity;
 
   @Column({ nullable: true })
   offerId: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.id, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   user: UserEntity;
 
   @Column({ nullable: true })
   userId: number;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
 }

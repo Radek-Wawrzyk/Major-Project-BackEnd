@@ -35,7 +35,14 @@ export class UsersService {
   }
 
   async findOne(id: number): Promise<UserEntity> {
-    const user: UserEntity = await this.usersRepository.findOneBy({ id });
+    const user: UserEntity = await this.usersRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        favOffers: true,
+      },
+    });
     if (!user) throw new NotFoundException(USERS_HTTP_RESPONSES.NOT_FOUND);
 
     return user;
@@ -60,12 +67,6 @@ export class UsersService {
   async update(userId: number, newUser: UpdateUserDto): Promise<UserEntity> {
     let user: UserEntity = await this.findOne(userId);
 
-    // If password is changed - generate new hash
-    if (user.password !== newUser.password) {
-      const hashedPassword: string = await bcrypt.hash(newUser.password, 12);
-      newUser = { ...newUser, password: hashedPassword };
-    }
-
     user = { ...user, ...newUser };
     return this.usersRepository.save(user);
   }
@@ -80,11 +81,12 @@ export class UsersService {
 
   async findWithOffers(userId: number): Promise<UserEntity> {
     const userWithOffers: UserEntity = await this.usersRepository.findOne({
+      relations: ['offers', 'offers.photos'],
       where: {
         id: userId,
-      },
-      relations: {
-        offers: true,
+        offers: {
+          status: true,
+        },
       },
     });
 

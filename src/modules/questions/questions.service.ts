@@ -11,6 +11,7 @@ import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EMAIL_CONFIG, QUESTIONS_HTTP_RESPONSES } from './questions.enum';
 import { renderQuestionEmailTemplate } from 'src/helpers/mailing-messages';
 import { StatsService } from '../stats/stats.service';
+import { PaginationResponse } from 'src/types/response';
 
 @Injectable()
 export class QuestionsService {
@@ -85,14 +86,31 @@ export class QuestionsService {
     return question;
   }
 
-  async findAll(userId: number): Promise<QuestionsEntity[]> {
-    const questions: QuestionsEntity[] = await this.questionRepository.find({
-      where: {
-        userId: userId,
-      },
-    });
+  async findAll(userId: number, params: any): Promise<PaginationResponse> {
+    const pagination = {
+      page: parseInt(params.page) || 1,
+      limit: parseInt(params.limit) || 8,
+    };
+    const skippedItems: number = (pagination.page - 1) * pagination.limit;
 
-    return questions;
+    const [questions, totalCount] = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where('questions.userId = :userId', { userId })
+      .leftJoinAndSelect('questions.offer', 'offer')
+      .offset(skippedItems)
+      .limit(pagination.limit)
+      .select(['questions', 'offer.name'])
+      .getManyAndCount();
+
+    const totalPages: number = Math.ceil(totalCount / pagination.limit);
+
+    return {
+      totalCount: !questions.length ? 0 : totalCount,
+      totalPages: totalPages,
+      limit: pagination.limit,
+      page: pagination.page,
+      data: questions,
+    };
   }
 
   async delete(questionId: number, userId: number): Promise<QuestionsEntity> {

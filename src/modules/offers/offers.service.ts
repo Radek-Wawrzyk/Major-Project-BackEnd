@@ -27,12 +27,6 @@ export class OffersService {
     let databaseQuery: SelectQueryBuilder<OfferEntity> =
       this.offerRepository.createQueryBuilder('offers');
 
-    if (params.userId) {
-      databaseQuery = databaseQuery.andWhere('offers.author_id = :userId', {
-        userId: params.userId,
-      });
-    }
-
     if (params.search) {
       databaseQuery = databaseQuery.andWhere('offers.name like :search', {
         search: `%${params.search}%`,
@@ -245,7 +239,7 @@ export class OffersService {
     // Pagination & sorting part
     const pagination: OffersPaginationDto = {
       page: parseInt(params.page) || 1,
-      limit: parseInt(params.limit) || 10,
+      limit: parseInt(params.limit) || 8,
     };
     const sorting: OffersSortingDto = {
       field: params.sortingField || 'created_at',
@@ -254,15 +248,45 @@ export class OffersService {
     const skippedItems: number = (pagination.page - 1) * pagination.limit;
 
     const [offers, totalCount] = await databaseQuery
+      .leftJoinAndSelect('offers.photos', 'photos')
+      .andWhere('offers.status = true')
       .offset(skippedItems)
-      .limit(pagination.limit)
-      .orderBy(`${sorting.field}`, sorting.order === 'ASC' ? 'ASC' : 'DESC')
+      .take(pagination.limit)
+      .orderBy(`offers.created_at`, sorting.order === 'ASC' ? 'ASC' : 'DESC')
       .getManyAndCount();
 
     const totalPages: number = Math.ceil(totalCount / pagination.limit);
 
     return {
-      totalCount: totalCount,
+      totalCount: !offers.length ? 0 : totalCount,
+      totalPages: totalPages,
+      limit: pagination.limit,
+      page: pagination.page,
+      data: offers,
+    };
+  }
+
+  async findUserOffers(userId: number, params: any) {
+    // Pagination & sorting part
+    const pagination: OffersPaginationDto = {
+      page: parseInt(params.page) || 1,
+      limit: parseInt(params.limit) || 8,
+    };
+    const skippedItems: number = (pagination.page - 1) * pagination.limit;
+
+    const [offers, totalCount] = await this.offerRepository.findAndCount({
+      where: {
+        authorId: userId,
+      },
+      relations: {
+        photos: true,
+      },
+    });
+
+    const totalPages: number = Math.ceil(totalCount / pagination.limit);
+
+    return {
+      totalCount: !offers.length ? 0 : totalCount,
       totalPages: totalPages,
       limit: pagination.limit,
       page: pagination.page,
@@ -338,10 +362,10 @@ export class OffersService {
     return await this.offerRepository.save(offer);
   }
 
-  create(offer: CreateOfferDto, userId: number): Promise<OfferEntity> {
+  create(offer: CreateOfferDto, userId: number): Promise<OfferEntity> {    
     const newOffer: OfferEntity = this.offerRepository.create({
       ...offer,
-      author: userId,
+      authorId: userId,
       published_date: offer.status ? new Date() : null,
     });
 

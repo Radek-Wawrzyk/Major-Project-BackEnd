@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -17,8 +18,11 @@ export class FavoriteOffersController {
 
   @Get('/get')
   @UseGuards(JwtAuthGuard)
-  async getAllFavoriteOffers(@Request() request: AppRequest) {
-    return await this.favoriteOffersService.findAll(parseInt(request.user.id));
+  async getAllFavoriteOffers(@Request() request: AppRequest, @Query() query) {
+    return await this.favoriteOffersService.findAll(
+      parseInt(request.user.id),
+      query,
+    );
   }
 
   @Get('/get/:id')

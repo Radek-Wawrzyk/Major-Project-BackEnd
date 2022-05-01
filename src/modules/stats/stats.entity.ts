@@ -22,13 +22,19 @@ export class StatsEntity {
   @Column({ nullable: false, default: 'view' })
   type: 'view' | 'question';
 
-  @ManyToOne(() => UserEntity, (user) => user.stats)
+  @ManyToOne(() => UserEntity, (user) => user.stats, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   author: UserEntity['id'];
 
   @Column({ nullable: true })
   authorId: number;
 
-  @ManyToOne(() => OfferEntity, (offer) => offer.stats)
+  @ManyToOne(() => OfferEntity, (offer) => offer.stats, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   offer: OfferEntity['id'];
 
   @Column({ nullable: true })

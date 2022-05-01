@@ -15,7 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { saveImageToStorage } from 'src/helpers/image-storage';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { UpdateUserDto } from './users.dto';
+import { UpdateUserDto, UpdateUserPasswordDto } from './users.dto';
 import { UsersService } from './users.service';
 import { AppRequest } from 'src/types/request';
 
@@ -49,6 +49,18 @@ export class UsersController {
     return await this.usersService.update(
       parseInt(request.user.id),
       currentUser,
+    );
+  }
+
+  @Post('/change-password')
+  @UseGuards(JwtAuthGuard)
+  async changeUserPassword(
+    @Body() passwordDetails: UpdateUserPasswordDto,
+    @Request() request: AppRequest,
+  ) {
+    return await this.usersService.updatePassword(
+      passwordDetails.password,
+      parseInt(request.user.id),
     );
   }
 
