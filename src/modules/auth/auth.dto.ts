@@ -41,9 +41,9 @@ class AuthRegisterDto {
   })
   password: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phone: number;
+  phone: string;
 }
 
 class AuthTokenDto {
@@ -55,7 +55,7 @@ class AuthTokenedUserDto {
   first_name: string;
   last_name: string;
   email: string;
-  phone: number;
+  phone: string;
   avatar_url: string | null;
   bio: string | null;
   created_at: Date;

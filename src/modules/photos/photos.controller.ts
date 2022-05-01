@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PhotosService } from './photos.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { saveImageToStorage } from 'src/helpers/image-storage';
-import { PhotoCreateDto, PhotoPrimaryDto, PhotoUpdateDto } from './photos.dto';
+import { PhotoPrimaryDto } from './photos.dto';
 import { Response } from 'express';
 import { AppRequest } from 'src/types/request';
 
@@ -24,32 +24,32 @@ import { AppRequest } from 'src/types/request';
 export class PhotosController {
   constructor(private readonly photosService: PhotosService) {}
 
-  @Post('/upload')
+  @Post('/upload/:id')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   uploadPhoto(
     @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
-    @Body() photoCreateDetails: PhotoCreateDto,
+    @Param('id') offerId: string,
   ) {
     return this.photosService.create(
       file,
-      photoCreateDetails.offerId,
+      parseInt(offerId),
       request.fileValidationError,
     );
   }
 
-  @Put('/update')
+  @Put('/update/:id')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage('photos')))
   async editPhoto(
     @Request() request: AppRequest,
     @UploadedFile() file: Express.Multer.File,
-    @Body() photoUpdateDetails: PhotoUpdateDto,
+    @Param('id') photoId: string,
   ) {
     return await this.photosService.update(
       file,
-      photoUpdateDetails.photoId,
+      parseInt(photoId),
       request.fileValidationError,
     );
   }
@@ -59,6 +59,18 @@ export class PhotosController {
   async getSourcePhoto(@Res() response: Response, @Param('id') id: string) {
     const photoLink: string = await this.photosService.findImage(parseInt(id));
     return response.sendFile(photoLink);
+  }
+
+  @Get('/get-all/:id')
+  @UseGuards(JwtAuthGuard)
+  async getAllPhotos(@Param('id') offerId: string) {
+    return await this.photosService.findAll(parseInt(offerId));
+  }
+
+  @Get('/get/:id')
+  @UseGuards(JwtAuthGuard)
+  async getPhoto(@Param('id') id: string) {
+    return await this.photosService.findOne(parseInt(id));
   }
 
   @Get('/get-link/:id')

@@ -13,9 +13,9 @@ class CreateQuestionDto {
   @IsEmail()
   email: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phone: number;
+  phone: string;
 
   @IsNumber()
   @IsNotEmpty()

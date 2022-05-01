@@ -8,9 +8,6 @@ import {
 
 class UpdateUserDto {
   @IsNotEmpty()
-  id: number;
-
-  @IsNotEmpty()
   @IsString()
   first_name: string;
 
@@ -23,21 +20,11 @@ class UpdateUserDto {
   email: string;
 
   @IsNotEmpty()
-  password: string;
+  @IsString()
+  phone: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  phone: number;
-
-  avatar_url: string | null;
-
+  @IsString()
   bio: string | null;
-
-  @IsDateString()
-  created_at: Date;
-
-  @IsDateString()
-  updated_at: Date;
 }
 
 class CreateUserDto {
@@ -58,8 +45,14 @@ class CreateUserDto {
   password: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  phone: number;
+  @IsString()
+  phone: string;
 }
 
-export { UpdateUserDto, CreateUserDto };
+class UpdateUserPasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}
+
+export { UpdateUserDto, CreateUserDto, UpdateUserPasswordDto };

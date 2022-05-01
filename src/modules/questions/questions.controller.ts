@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -42,7 +43,10 @@ export class QuestionsController {
 
   @Get('/get')
   @UseGuards(JwtAuthGuard)
-  async getAllQuestion(@Request() request: AppRequest) {
-    return await this.questionsService.findAll(parseInt(request.user.id));
+  async getAllQuestion(@Request() request: AppRequest, @Query() query) {
+    return await this.questionsService.findAll(
+      parseInt(request.user.id),
+      query,
+    );
   }
 }

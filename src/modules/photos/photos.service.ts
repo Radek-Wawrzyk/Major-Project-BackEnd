@@ -42,8 +42,18 @@ export class PhotosService {
       url: file.path,
       name: file.filename,
       is_primary: offerPhotos && offerPhotos.length ? false : true,
-      offer: offerId,
+      offerId: offerId,
     });
+
+    const numberOfPhotos: number = await this.photoRepository.count({
+      where: {
+        offerId,
+      },
+    });
+
+    if (numberOfPhotos >= 5) {
+      throw new BadRequestException(PHOTOS_HTTP_RESPONSES.OVER_LIMIT);
+    }
 
     return this.photoRepository.save(newFile);
   }
@@ -86,6 +96,18 @@ export class PhotosService {
     return photo;
   }
 
+  async findAll(offerId: number): Promise<PhotoEntity[]> {
+    const photos: PhotoEntity[] = await this.photoRepository.find({
+      where: {
+        offerId,
+      },
+    });
+
+    if (!photos) throw new NotFoundException(PHOTOS_HTTP_RESPONSES.NOT_FOUND);
+
+    return photos;
+  }
+
   async remove(id: number): Promise<boolean> {
     const photo: PhotoEntity = await this.findOne(id);
 
@@ -97,6 +119,25 @@ export class PhotosService {
     }
 
     await this.photoRepository.remove(photo);
+
+    const allRelatedPhotos: PhotoEntity[] = await this.findAll(photo.offerId);
+    const isAnyPhotoHasPrimaryStatus: boolean = allRelatedPhotos.some(
+      (photo: PhotoEntity) => photo.is_primary,
+    );
+
+    // If there is no photos with primary status set as true,
+    // then set 'is_primary' to the previous or first image from the list
+    if (!isAnyPhotoHasPrimaryStatus) {
+      const indexToRemove: number = allRelatedPhotos.indexOf(photo);
+      const photoToEdit: PhotoEntity =
+        indexToRemove > 0
+          ? allRelatedPhotos[indexToRemove - 1]
+          : allRelatedPhotos[0];
+
+      photoToEdit.is_primary = true;
+      this.photoRepository.save(photoToEdit);
+    }
+
     return true;
   }
 

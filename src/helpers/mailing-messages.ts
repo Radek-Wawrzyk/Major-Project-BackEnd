@@ -3,7 +3,7 @@ const renderQuestionEmailTemplate = (
   message: string,
   fullName: string,
   email: string,
-  phone: number,
+  phone: string,
   offerName: string,
 ): string => {
   return `
@@ -54,7 +54,6 @@ const renderQuestionEmailTemplate = (
 const renderResetPasswordEmailTemplate = (
   serverAddress: string,
   firstName: string,
-  token: string,
 ): string => {
   return `
     <!DOCTYPE html>

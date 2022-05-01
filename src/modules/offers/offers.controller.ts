@@ -25,6 +25,12 @@ export class OffersController {
     return this.offersService.create(offer, parseInt(request.user.id));
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-user-offers')
+  getUserOffers(@Request() request: AppRequest, @Query() query) {
+    return this.offersService.findUserOffers(parseInt(request.user.id), query);
+  }
+
   @Get('/get/:id')
   async getOffer(@Param('id') id: string) {
     return await this.offersService.findOne(parseInt(id));
@@ -37,7 +43,6 @@ export class OffersController {
 
   @Get('/get')
   async getAllOffers(@Query() query) {
-    console.log(query);
     return await this.offersService.findAll(query);
   }
 

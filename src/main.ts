@@ -13,6 +13,12 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
+  app.enableCors({
+    origin: true,
+  });
+
+  // console.log(app.)
+
   await app.listen(process.env.APP_PORT || 3000, '0.0.0.0');
 }
 
