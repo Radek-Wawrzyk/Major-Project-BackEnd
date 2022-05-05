@@ -243,16 +243,19 @@ export class OffersService {
     };
     const sorting: OffersSortingDto = {
       field: params.sortingField || 'created_at',
-      order: params.sortingOrder || 'ASC',
+      order: params.sortingOrder || 'DESC',
     };
     const skippedItems: number = (pagination.page - 1) * pagination.limit;
 
     const [offers, totalCount] = await databaseQuery
       .leftJoinAndSelect('offers.photos', 'photos')
       .andWhere('offers.status = true')
-      .offset(skippedItems)
+      .skip(skippedItems)
       .take(pagination.limit)
-      .orderBy(`offers.created_at`, sorting.order === 'ASC' ? 'ASC' : 'DESC')
+      .orderBy(
+        `offers.${sorting.field}`,
+        sorting.order === 'ASC' ? 'ASC' : 'DESC',
+      )
       .getManyAndCount();
 
     const totalPages: number = Math.ceil(totalCount / pagination.limit);

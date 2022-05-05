@@ -15,7 +15,6 @@ import { FavoriteOffersModule } from '../favorite-offers/favorite-offers.module'
     PhotosModule,
     StatsModule,
     forwardRef(() => FavoriteOffersModule),
-    // FavoriteOffersModule,
   ],
   controllers: [OffersController],
   providers: [OffersService],
